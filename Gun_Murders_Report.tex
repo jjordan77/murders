@@ -133,17 +133,21 @@
 This is a report on 2010 gun murder rates obtained from FBI reports. The
 original data was obtained from
 \href{https://en.wikipedia.org/wiki/Murder_in_the_United_States_by_state}{this
-Wikipedia page}.
+Wikipedia page}. The work for this was done based on different parts of
+different courses from the HarvardX Data Science Professional
+Certificate Program.
 
-We are going to use the following library:
+Will use the tidyverse library plus ggthemes and ggrepel packages:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(ggthemes)}
+\KeywordTok{library}\NormalTok{(ggrepel)}
 \end{Highlighting}
 \end{Shaded}
 
-and load the data we already wrangled:
+and load the data already wrangled:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -151,12 +155,35 @@ and load the data we already wrangled:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Murder rate by state}\label{murder-rate-by-state}
+\subsection{Murder rate by state
+(barplot)}\label{murder-rate-by-state-barplot}
 
-We note the large state to state variability by generating a barplot
+Can note the large state to state variability by generating a barplot
 showing the murder rate by state:
 
+*Murder rate calculated by total number of murders divided by 100,000
+
 \includegraphics{Gun_Murders_Report_files/figure-latex/murder-rate-by-state-1.pdf}
+
+\subsection{Murder rate by state
+(scatterplot)}\label{murder-rate-by-state-scatterplot}
+
+Based on total number of murders and colour-coded by region
+
+Plot also clearly shows that states with higher populations also have
+more murders.
+
+\includegraphics{Gun_Murders_Report_files/figure-latex/scatterplot-1.pdf}
+
+\subsection{Murder rate by region
+(boxplot)}\label{murder-rate-by-region-boxplot}
+
+Examine the murder rate based on region. Results clearly show that the
+South has a higher murder rate than other regions.
+
+Individual points for each state.
+
+\includegraphics{Gun_Murders_Report_files/figure-latex/regional boxplot-1.pdf}
 
 
 \end{document}

@@ -2,7 +2,9 @@
 title: "Report on Gun Murders"
 author: "John Jordan"
 date: "12 February 2019"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -13,10 +15,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This is a report on 2010 gun murder rates obtained from FBI reports. The original data was obtained from [this Wikipedia page](https://en.wikipedia.org/wiki/Murder_in_the_United_States_by_state). The work for this was done based on different parts of different courses from the HarvardX Data Science Professional Certificate Program. 
 
-Will use the tidyverse library:
+Will use the tidyverse library plus ggthemes and ggrepel packages:
 
 ```{r loading-libs, message=FALSE}
 library(tidyverse)
+library(ggthemes)
+library(ggrepel)
 ```
   
 and load the data already wrangled:
@@ -27,7 +31,9 @@ load("rda/murders.rda")
 
 ## Murder rate by state (barplot)
 
-We note the large state to state variability by generating a barplot showing the murder rate by state:
+Can note the large state to state variability by generating a barplot showing the murder rate by state: 
+
+*Murder rate calculated by total number of murders divided by 100,000
 
 ```{r murder-rate-by-state, echo=FALSE}
 murders %>% mutate(abb = reorder(abb, rate)) %>%
@@ -35,20 +41,21 @@ murders %>% mutate(abb = reorder(abb, rate)) %>%
   geom_bar(width = 0.5, stat = "identity", color = "black") +
   coord_flip() +
   xlab("State Abbreviation") +
-  ylab("Murder Rate")
+  ylab("Murder Rate") +
+  ggtitle("Murder Rate by State") +
+  theme_economist()
 ```
 
 ## Murder rate by state (scatterplot)
-
 Based on total number of murders and colour-coded by region
 
+Plot also clearly shows that states with higher populations also have more murders. 
+
 ```{r scatterplot, echo=FALSE}
-library(ggthemes)
-library(ggrepel)
-r <- murders %>% summarise(rate = sum(total) / sum(population) * 10^6) %>% .$rate
+national_murder_rate <- murders %>% summarise(rate = sum(total) / sum(population) * 10^6) %>% .$rate
 
 murders %>% ggplot(aes(population/10^6, total, label = abb)) +
-  geom_abline(intercept = log10(r), lty = 2, color = "darkgrey") + 
+  geom_abline(intercept = log10(national_murder_rate), lty = 2, color = "darkgrey") + 
   geom_point(aes(col=region), size = 3) +
   geom_text_repel() +
   scale_x_log10() +
@@ -60,3 +67,16 @@ murders %>% ggplot(aes(population/10^6, total, label = abb)) +
   theme_economist()
 ```
 
+## Murder rate by region (boxplot)
+Examine the murder rate based on region. Results clearly show that the South has a higher murder rate than other regions. 
+
+Individual points for each state.
+
+```{r regional boxplot, echo=FALSE}
+murders %>% ggplot(aes(y=rate, x=region, fill = region)) + 
+  geom_boxplot(outlier.colour = "black") + 
+  geom_point() +
+  xlab("Murder Rate") + 
+  ylab("Region") +
+  ggtitle("Murder Rate by Region") +
+  theme_economist()
