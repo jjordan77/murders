@@ -11,21 +11,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-This is a report on 2010 gun murder rates obtained from FBI reports. The original data was obtained from [this Wikipedia page](https://en.wikipedia.org/wiki/Murder_in_the_United_States_by_state).
+This is a report on 2010 gun murder rates obtained from FBI reports. The original data was obtained from [this Wikipedia page](https://en.wikipedia.org/wiki/Murder_in_the_United_States_by_state). The work for this was done based on different parts of different courses from the HarvardX Data Science Professional Certificate Program. 
 
-We are going to use the following library:
+Will use the tidyverse library:
 
 ```{r loading-libs, message=FALSE}
 library(tidyverse)
 ```
   
-and load the data we already wrangled:
+and load the data already wrangled:
 
 ```{r}
 load("rda/murders.rda")
 ```
 
-## Murder rate by state 
+## Murder rate by state (barplot)
 
 We note the large state to state variability by generating a barplot showing the murder rate by state:
 
@@ -33,5 +33,30 @@ We note the large state to state variability by generating a barplot showing the
 murders %>% mutate(abb = reorder(abb, rate)) %>%
   ggplot(aes(abb, rate)) +
   geom_bar(width = 0.5, stat = "identity", color = "black") +
-  coord_flip()
+  coord_flip() +
+  xlab("State Abbreviation") +
+  ylab("Murder Rate")
 ```
+
+## Murder rate by state (scatterplot)
+
+Based on total number of murders and colour-coded by region
+
+```{r scatterplot, echo=FALSE}
+library(ggthemes)
+library(ggrepel)
+r <- murders %>% summarise(rate = sum(total) / sum(population) * 10^6) %>% .$rate
+
+murders %>% ggplot(aes(population/10^6, total, label = abb)) +
+  geom_abline(intercept = log10(r), lty = 2, color = "darkgrey") + 
+  geom_point(aes(col=region), size = 3) +
+  geom_text_repel() +
+  scale_x_log10() +
+  scale_y_log10() +
+  xlab("Population in millions (log scale)") +
+  ylab("Total number of murders (log scale)") +
+  ggtitle("US Gun Murders in 2010") +
+  scale_color_discrete(name = "Region") +
+  theme_economist()
+```
+
